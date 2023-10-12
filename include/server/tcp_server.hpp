@@ -25,6 +25,10 @@ public:
           acceptor_(io_service_, tcp::endpoint(tcp::v4(), port)) {}
 
     void start() {
+        if (stopped) {
+            return;
+        }
+
         std::cout << "Serving TCP connections on port " << port_ << std::endl;
 
         t_ = std::thread([&] {
@@ -44,9 +48,14 @@ public:
     }
 
     void stop() {
-        stop_ = true;
-        acceptor_.close();
-        if (t_.joinable()) t_.join();
+        if (!stopped) {
+            std::cout << "Stopping TCP server.. ";
+            stop_ = true;
+            acceptor_.close();
+            if (t_.joinable()) t_.join();
+            std::cout << "DONE" << std::endl;
+            stopped = true;
+        }
     }
 
     ~tcp_server() {
@@ -61,7 +70,8 @@ private:
 
     std::thread t_;
 
-    bool stop_{false};
+    bool stopped{false};
+    std::atomic<bool> stop_{false};
 };
 
 #endif//TESTABLE_NETWORKING_TCP_SERVER_HPP
