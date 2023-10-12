@@ -19,9 +19,9 @@ using namespace boost::asio::ip;
 class tcp_server {
 
 public:
-    explicit tcp_server(int port, std::unique_ptr<message_handler> handler)
+    tcp_server(int port, message_handler* handler)
         : port_(port),
-          handler_(std::move(handler)),
+          handler_(handler),
           acceptor_(io_service_, tcp::endpoint(tcp::v4(), port)) {}
 
     void start() {
@@ -38,7 +38,7 @@ public:
                     auto socket = std::make_unique<tcp::socket>(io_service_);
                     acceptor_.accept(*socket);// blocking operation
 
-                    handlers.emplace_back(std::make_unique<connection>(std::move(socket), handler_.get()));
+                    handlers.emplace_back(std::make_unique<connection>(std::move(socket), handler_));
                     handlers.back()->run_handler();
                 }
             } catch (const std::exception &ex) {
@@ -66,7 +66,7 @@ private:
     int port_;
     io_service io_service_;
     tcp::acceptor acceptor_;
-    std::unique_ptr<message_handler> handler_;
+    message_handler* handler_;
 
     std::thread t_;
 

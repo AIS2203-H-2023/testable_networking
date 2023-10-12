@@ -24,9 +24,9 @@ int main(int argc, char **argv) {
     }
 
     try {
-        auto handler = std::make_unique<my_handler>();
+        my_handler handler;
 
-        tcp_server server(port, std::move(handler));
+        tcp_server server(port, &handler);
         server.start();
 
         std::cout << "Press a key to continue..." << std::endl;
