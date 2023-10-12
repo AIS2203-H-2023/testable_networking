@@ -33,6 +33,22 @@ TEST_CASE("Test TCP server start/stop") {
     }
 }
 
+TEST_CASE("Test handler") {
+
+    auto msgGenerator = [](auto msg) {
+        return "Good morning, " + msg + "!";
+    };
+
+    my_message_handler handler(msgGenerator);
+
+    std::string msg{"Per"};
+
+    auto expected = msgGenerator(msg);
+    auto actual = handler.handle_message(msg);
+
+    CHECK(expected == actual);
+}
+
 TEST_CASE("Test socket communication") {
 
     auto msgGenerator = [](auto msg) {
