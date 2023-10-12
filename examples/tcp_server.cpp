@@ -1,5 +1,6 @@
 
 #include "server/tcp_server.hpp"
+#include <sstream>
 
 struct my_handler : message_handler {
 
