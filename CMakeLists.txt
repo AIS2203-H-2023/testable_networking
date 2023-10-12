@@ -5,6 +5,14 @@ option(NETWORKING_BUILD_TESTS "Enable tests" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Disable Boost warning
+set(Boost_NO_WARN_NEW_VERSIONS 1)
+
+if (MSVC)
+    # Boost asio wants this...
+    add_compile_definitions("_WIN32_WINNT=0x0601")
+endif ()
+
 find_package(Boost COMPONENTS system REQUIRED)
 
 add_executable(main main.cpp)
