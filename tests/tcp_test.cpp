@@ -35,16 +35,21 @@ TEST_CASE("Test TCP server start/stop") {
 
 TEST_CASE("Test socket communication") {
 
-    my_message_handler handler([](auto msg) {
+    auto msgGenerator = [](auto msg) {
         return "Hello, " + msg + "!";
-    });
+    };
+
+    my_message_handler handler(msgGenerator);
 
     tcp_server server(port, &handler);
     server.start();
 
     tcp_client client("127.0.0.1", port);
     std::string msg{"Nils"};
-    client.send("Nils");
+    client.send(msg);
 
-    CHECK("Hello, " + msg + "!" == client.recv());
+    auto expected = msgGenerator(msg);
+    auto actual = client.recv();
+
+    CHECK(expected == actual);
 }
